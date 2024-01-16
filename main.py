@@ -1,7 +1,6 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
-import tensorflow
 from keras.applications import InceptionV3
 from keras import layers, models, optimizers
 from keras.preprocessing.image import ImageDataGenerator
@@ -53,22 +52,22 @@ history = model.fit(
     validation_data=val_generator
 )
 
-# predictions = model.predict(val_generator)
-#
-# actual_ages = []
-# for subdir in os.listdir(data_dir):
-#     subdir_path = os.path.join(data_dir, subdir)
-#     if os.path.isdir(subdir_path) and subdir.startswith("age_group_"):
-#         age_label = int(subdir.split('_')[2])
-#         actual_ages.extend([age_label] * len(os.listdir(subdir_path)))
-#
-# num_samples = min(5, len(predictions))
-# for i in range(num_samples):
-#     actual_age = actual_ages[i]
-#     predicted_age = predictions[i][0]
-#     print(f"Actual Age: {actual_age}, Predicted Age: {predicted_age}")
+predictions = model.predict(val_generator)
+
+actual_ages = []
+for subdir in os.listdir(data_dir):
+    subdir_path = os.path.join(data_dir, subdir)
+    if os.path.isdir(subdir_path) and subdir.startswith("age_group_"):
+        age_label = int(subdir.split('_')[2])
+        actual_ages.extend([age_label] * len(os.listdir(subdir_path)))
+
+num_samples = min(5, len(predictions))
+for i in range(num_samples):
+    actual_age = actual_ages[i]
+    predicted_age = predictions[i][0]
+    print(f"Реальный возраст: {actual_age}, предсказанный возраст: {predicted_age}")
 
 test_loss, test_mae = model.evaluate(val_generator)
 
-print(f"Mean Absolute Error on Validation Set: {test_mae}")
+print(f"Средняя абсолютная ошибка на валидационном множестве: {test_mae}")
 
